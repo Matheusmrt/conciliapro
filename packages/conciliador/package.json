@@ -2,8 +2,11 @@
   "name": "@conciliacao/conciliador",
   "version": "1.0.0",
   "private": true,
+  "scripts": {
+    "build": "tsc"
+  },
   "exports": {
-    ".": "./src/index.ts"
+    ".": "./dist/index.js"
   },
   "dependencies": {
     "@conciliacao/db": "workspace:*"

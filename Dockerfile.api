@@ -21,6 +21,8 @@ COPY . .
 RUN ./node_modules/.bin/prisma generate --schema=packages/db/prisma/schema.prisma
 
 RUN pnpm --filter @conciliacao/db build || true
+RUN pnpm --filter @conciliacao/edi-parser build || true
+RUN pnpm --filter @conciliacao/conciliador build || true
 RUN pnpm --filter @conciliacao/api build || true
 
 FROM node:20-alpine AS runner
@@ -36,8 +38,10 @@ COPY --from=builder /app/apps/api/package.json ./apps/api/
 COPY --from=builder /app/packages/db/dist ./packages/db/dist
 COPY --from=builder /app/packages/db/package.json ./packages/db/
 COPY --from=builder /app/packages/db/prisma ./packages/db/prisma
-COPY --from=builder /app/packages/edi-parser ./packages/edi-parser
-COPY --from=builder /app/packages/conciliador ./packages/conciliador
+COPY --from=builder /app/packages/edi-parser/dist ./packages/edi-parser/dist
+COPY --from=builder /app/packages/edi-parser/package.json ./packages/edi-parser/
+COPY --from=builder /app/packages/conciliador/dist ./packages/conciliador/dist
+COPY --from=builder /app/packages/conciliador/package.json ./packages/conciliador/
 COPY --from=builder /app/package.json ./
 COPY --from=builder /app/pnpm-workspace.yaml ./
 
