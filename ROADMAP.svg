@@ -1,0 +1,256 @@
+<svg viewBox="0 0 900 1420" xmlns="http://www.w3.org/2000/svg" font-family="system-ui, -apple-system, sans-serif">
+  <title>ConciliaPro — Roadmap Completo</title>
+
+  <rect width="900" height="1420" fill="#f8f9fb"/>
+
+  <rect x="0" y="0" width="900" height="56" fill="#2563eb"/>
+  <text x="450" y="22" text-anchor="middle" fill="white" font-size="11" font-weight="600" opacity="0.7">MAPA DO PROJETO</text>
+  <text x="450" y="40" text-anchor="middle" fill="white" font-size="18" font-weight="700">ConciliaPro — Estrutura Completa</text>
+
+  <rect x="20" y="68" width="860" height="32" rx="6" fill="white" stroke="#e2e8f0" stroke-width="1"/>
+  <rect x="32" y="78" width="12" height="12" rx="2" fill="#16a34a"/>
+  <text x="50" y="88" fill="#374151" font-size="11">✓ Feito</text>
+  <rect x="110" y="78" width="12" height="12" rx="2" fill="#2563eb"/>
+  <text x="128" y="88" fill="#374151" font-size="11">Fase 1 — Em andamento</text>
+  <rect x="290" y="78" width="12" height="12" rx="2" fill="#7c3aed"/>
+  <text x="308" y="88" fill="#374151" font-size="11">Fase 2</text>
+  <rect x="370" y="78" width="12" height="12" rx="2" fill="#ea580c"/>
+  <text x="388" y="88" fill="#374151" font-size="11">Fase 3</text>
+  <rect x="448" y="78" width="12" height="12" rx="2" fill="#64748b"/>
+  <text x="466" y="88" fill="#374151" font-size="11">Fase 4 — Futuro</text>
+
+  <!-- INFRAESTRUTURA -->
+  <text x="20" y="122" fill="#64748b" font-size="10" font-weight="600" letter-spacing="1">INFRAESTRUTURA</text>
+  <rect x="20" y="130" width="860" height="70" rx="8" fill="white" stroke="#e2e8f0" stroke-width="1.5"/>
+  <text x="40" y="152" fill="#374151" font-size="12" font-weight="700">Monorepo pnpm Workspaces</text>
+  <rect x="40" y="160" width="120" height="28" rx="4" fill="#f0fdf4" stroke="#86efac" stroke-width="1"/>
+  <text x="100" y="179" text-anchor="middle" fill="#16a34a" font-size="10" font-weight="600">packages/db</text>
+  <rect x="172" y="160" width="140" height="28" rx="4" fill="#f0fdf4" stroke="#86efac" stroke-width="1"/>
+  <text x="242" y="179" text-anchor="middle" fill="#16a34a" font-size="10" font-weight="600">packages/edi-parser</text>
+  <rect x="324" y="160" width="140" height="28" rx="4" fill="#f0fdf4" stroke="#86efac" stroke-width="1"/>
+  <text x="394" y="179" text-anchor="middle" fill="#16a34a" font-size="10" font-weight="600">packages/conciliador</text>
+  <rect x="476" y="160" width="100" height="28" rx="4" fill="#f0fdf4" stroke="#86efac" stroke-width="1"/>
+  <text x="526" y="179" text-anchor="middle" fill="#16a34a" font-size="10" font-weight="600">apps/api</text>
+  <rect x="588" y="160" width="100" height="28" rx="4" fill="#f0fdf4" stroke="#86efac" stroke-width="1"/>
+  <text x="638" y="179" text-anchor="middle" fill="#16a34a" font-size="10" font-weight="600">apps/web</text>
+  <rect x="700" y="160" width="160" height="28" rx="4" fill="#eff6ff" stroke="#93c5fd" stroke-width="1"/>
+  <text x="780" y="174" text-anchor="middle" fill="#2563eb" font-size="10" font-weight="600">packages/coletador</text>
+  <text x="780" y="184" text-anchor="middle" fill="#2563eb" font-size="9">SFTP automático — Fase 3</text>
+
+  <!-- BANCO DE DADOS -->
+  <text x="20" y="224" fill="#64748b" font-size="10" font-weight="600" letter-spacing="1">BANCO DE DADOS — schema.prisma</text>
+  <rect x="20" y="232" width="860" height="120" rx="8" fill="white" stroke="#e2e8f0" stroke-width="1.5"/>
+  <rect x="40" y="244" width="110" height="36" rx="4" fill="#f0fdf4" stroke="#86efac" stroke-width="1"/>
+  <text x="95" y="258" text-anchor="middle" fill="#15803d" font-size="10" font-weight="700">Empresa</text>
+  <text x="95" y="272" text-anchor="middle" fill="#15803d" font-size="9">multi-tenant</text>
+  <rect x="162" y="244" width="110" height="36" rx="4" fill="#f0fdf4" stroke="#86efac" stroke-width="1"/>
+  <text x="217" y="258" text-anchor="middle" fill="#15803d" font-size="10" font-weight="700">Usuario</text>
+  <text x="217" y="272" text-anchor="middle" fill="#15803d" font-size="9">auth + perfil</text>
+  <rect x="284" y="244" width="110" height="36" rx="4" fill="#f0fdf4" stroke="#86efac" stroke-width="1"/>
+  <text x="339" y="258" text-anchor="middle" fill="#15803d" font-size="10" font-weight="700">Estabelecimento</text>
+  <text x="339" y="272" text-anchor="middle" fill="#15803d" font-size="9">filiais/CNPJs</text>
+  <rect x="406" y="244" width="110" height="36" rx="4" fill="#f0fdf4" stroke="#86efac" stroke-width="1"/>
+  <text x="461" y="258" text-anchor="middle" fill="#15803d" font-size="10" font-weight="700">Venda</text>
+  <text x="461" y="272" text-anchor="middle" fill="#15803d" font-size="9">dados PDV</text>
+  <rect x="528" y="244" width="110" height="36" rx="4" fill="#f0fdf4" stroke="#86efac" stroke-width="1"/>
+  <text x="583" y="258" text-anchor="middle" fill="#15803d" font-size="10" font-weight="700">Repasse</text>
+  <text x="583" y="272" text-anchor="middle" fill="#15803d" font-size="9">dados adquirente</text>
+  <rect x="650" y="244" width="110" height="36" rx="4" fill="#f0fdf4" stroke="#86efac" stroke-width="1"/>
+  <text x="705" y="258" text-anchor="middle" fill="#15803d" font-size="10" font-weight="700">Conciliacao</text>
+  <text x="705" y="272" text-anchor="middle" fill="#15803d" font-size="9">resultado motor</text>
+  <rect x="772" y="244" width="88" height="36" rx="4" fill="#f0fdf4" stroke="#86efac" stroke-width="1"/>
+  <text x="816" y="258" text-anchor="middle" fill="#15803d" font-size="10" font-weight="700">Divergencia</text>
+  <text x="816" y="272" text-anchor="middle" fill="#15803d" font-size="9">detalhes</text>
+  <rect x="40" y="292" width="130" height="36" rx="4" fill="#eff6ff" stroke="#93c5fd" stroke-width="1"/>
+  <text x="105" y="306" text-anchor="middle" fill="#1d4ed8" font-size="10" font-weight="700">ContratoTaxa</text>
+  <text x="105" y="320" text-anchor="middle" fill="#1d4ed8" font-size="9">MDR contratado — F1</text>
+  <rect x="182" y="292" width="130" height="36" rx="4" fill="#eff6ff" stroke="#93c5fd" stroke-width="1"/>
+  <text x="247" y="306" text-anchor="middle" fill="#1d4ed8" font-size="10" font-weight="700">ItemContratoTaxa</text>
+  <text x="247" y="320" text-anchor="middle" fill="#1d4ed8" font-size="9">taxa por produto — F1</text>
+  <rect x="324" y="292" width="130" height="36" rx="4" fill="#eff6ff" stroke="#93c5fd" stroke-width="1"/>
+  <text x="389" y="306" text-anchor="middle" fill="#1d4ed8" font-size="10" font-weight="700">AuditoriaTaxa</text>
+  <text x="389" y="320" text-anchor="middle" fill="#1d4ed8" font-size="9">resultado auditoria — F1</text>
+  <rect x="466" y="292" width="130" height="36" rx="4" fill="#eff6ff" stroke="#93c5fd" stroke-width="1"/>
+  <text x="531" y="306" text-anchor="middle" fill="#1d4ed8" font-size="10" font-weight="700">ContaBancaria</text>
+  <text x="531" y="320" text-anchor="middle" fill="#1d4ed8" font-size="9">domicílio bancário — F2</text>
+  <rect x="608" y="292" width="130" height="36" rx="4" fill="#f5f3ff" stroke="#c4b5fd" stroke-width="1"/>
+  <text x="673" y="306" text-anchor="middle" fill="#6d28d9" font-size="10" font-weight="700">Chargeback</text>
+  <text x="673" y="320" text-anchor="middle" fill="#6d28d9" font-size="9">contestações — F2</text>
+  <rect x="750" y="292" width="110" height="36" rx="4" fill="#fff7ed" stroke="#fdba74" stroke-width="1"/>
+  <text x="805" y="306" text-anchor="middle" fill="#c2410c" font-size="10" font-weight="700">JobColetador</text>
+  <text x="805" y="320" text-anchor="middle" fill="#c2410c" font-size="9">SFTP schedule — F3</text>
+
+  <!-- FASE 1 -->
+  <rect x="0" y="372" width="4" height="310" fill="#2563eb"/>
+  <text x="20" y="396" fill="#2563eb" font-size="10" font-weight="700" letter-spacing="1">FASE 1 — CORE FINANCEIRO (PRÓXIMO)</text>
+  <rect x="20" y="404" width="272" height="130" rx="8" fill="white" stroke="#93c5fd" stroke-width="2"/>
+  <rect x="20" y="404" width="272" height="28" rx="8" fill="#2563eb"/>
+  <rect x="20" y="420" width="272" height="12" fill="#2563eb"/>
+  <text x="156" y="422" text-anchor="middle" fill="white" font-size="11" font-weight="700">1. Contratos de Taxas</text>
+  <text x="36" y="450" fill="#374151" font-size="10" font-weight="600">Backend (API)</text>
+  <text x="36" y="464" fill="#6b7280" font-size="10">• Model ContratoTaxa + ItemContratoTaxa</text>
+  <text x="36" y="477" fill="#6b7280" font-size="10">• POST /contratos-taxas (criar contrato)</text>
+  <text x="36" y="490" fill="#6b7280" font-size="10">• GET/PUT/DELETE contratos</text>
+  <text x="36" y="503" fill="#374151" font-size="10" font-weight="600">Frontend</text>
+  <text x="36" y="516" fill="#6b7280" font-size="10">• Tela Cadastros → Contratos de Taxas</text>
+  <text x="36" y="529" fill="#6b7280" font-size="10">• Form: adquirente + produto + taxa%</text>
+  <rect x="306" y="404" width="272" height="130" rx="8" fill="white" stroke="#93c5fd" stroke-width="2"/>
+  <rect x="306" y="404" width="272" height="28" rx="8" fill="#2563eb"/>
+  <rect x="306" y="420" width="272" height="12" fill="#2563eb"/>
+  <text x="442" y="422" text-anchor="middle" fill="white" font-size="11" font-weight="700">2. Auditoria de Taxas</text>
+  <text x="322" y="450" fill="#374151" font-size="10" font-weight="600">Backend (API)</text>
+  <text x="322" y="464" fill="#6b7280" font-size="10">• GET /auditoria/taxas (com filtros)</text>
+  <text x="322" y="477" fill="#6b7280" font-size="10">• Lógica: repasse.taxaMdr vs contrato</text>
+  <text x="322" y="490" fill="#6b7280" font-size="10">• Agrupamento adq → estab → produto</text>
+  <text x="322" y="503" fill="#374151" font-size="10" font-weight="600">Frontend</text>
+  <text x="322" y="516" fill="#6b7280" font-size="10">• Tabela hierárquica drill-down (3 níveis)</text>
+  <text x="322" y="529" fill="#6b7280" font-size="10">• KPI divergência total em R$</text>
+  <rect x="592" y="404" width="288" height="130" rx="8" fill="white" stroke="#93c5fd" stroke-width="2"/>
+  <rect x="592" y="404" width="288" height="28" rx="8" fill="#2563eb"/>
+  <rect x="592" y="420" width="288" height="12" fill="#2563eb"/>
+  <text x="736" y="422" text-anchor="middle" fill="white" font-size="11" font-weight="700">3. Fluxo de Caixa</text>
+  <text x="608" y="450" fill="#374151" font-size="10" font-weight="600">Backend (API)</text>
+  <text x="608" y="464" fill="#6b7280" font-size="10">• GET /fluxo-caixa (data + adquirente)</text>
+  <text x="608" y="477" fill="#6b7280" font-size="10">• Vlr.Bruto/Comissão/Previsto/Pago/Saldo</text>
+  <text x="608" y="490" fill="#6b7280" font-size="10">• Agrupamento data → estab → adquirente</text>
+  <text x="608" y="503" fill="#374151" font-size="10" font-weight="600">Frontend</text>
+  <text x="608" y="516" fill="#6b7280" font-size="10">• Tabela hierárquica expandível</text>
+  <text x="608" y="529" fill="#6b7280" font-size="10">• Tabs por adquirente + export CSV/XLS</text>
+  <rect x="20" y="548" width="860" height="48" rx="8" fill="#eff6ff" stroke="#93c5fd" stroke-width="1.5"/>
+  <text x="40" y="566" fill="#1d4ed8" font-size="10" font-weight="700">EDI Parser — atualizações Fase 1</text>
+  <text x="40" y="580" fill="#4b5563" font-size="10">• EDI_REDE_O (tipo 1) feito  •  EDI_REDE_C (tipo 2) feito  •  Adicionar: Alelo, Pluxee, VR Benefícios, Ticket, Verocard (formato CSV/TXT próprio de cada um)</text>
+
+  <!-- FASE 2 -->
+  <rect x="0" y="614" width="4" height="250" fill="#7c3aed"/>
+  <text x="20" y="636" fill="#7c3aed" font-size="10" font-weight="700" letter-spacing="1">FASE 2 — OPERAÇÃO COMPLETA</text>
+  <rect x="20" y="644" width="200" height="110" rx="8" fill="white" stroke="#c4b5fd" stroke-width="1.5"/>
+  <rect x="20" y="644" width="200" height="22" rx="8" fill="#7c3aed"/>
+  <rect x="20" y="654" width="200" height="12" fill="#7c3aed"/>
+  <text x="120" y="660" text-anchor="middle" fill="white" font-size="10" font-weight="700">4. Agenda de Recebimentos</text>
+  <text x="36" y="682" fill="#6b7280" font-size="10">• Previsão por dia/adquirente</text>
+  <text x="36" y="695" fill="#6b7280" font-size="10">• Status: previsto vs pago</text>
+  <text x="36" y="708" fill="#6b7280" font-size="10">• Alerta de atraso</text>
+  <text x="36" y="721" fill="#6b7280" font-size="10">• Dashboard "hoje vai entrar"</text>
+  <text x="36" y="734" fill="#6b7280" font-size="10">• Export CSV/XLS</text>
+  <rect x="232" y="644" width="200" height="110" rx="8" fill="white" stroke="#c4b5fd" stroke-width="1.5"/>
+  <rect x="232" y="644" width="200" height="22" rx="8" fill="#7c3aed"/>
+  <rect x="232" y="654" width="200" height="12" fill="#7c3aed"/>
+  <text x="332" y="660" text-anchor="middle" fill="white" font-size="10" font-weight="700">5. Cancelamentos &amp; Chargebacks</text>
+  <text x="248" y="682" fill="#6b7280" font-size="10">• Registro de cancelamentos</text>
+  <text x="248" y="695" fill="#6b7280" font-size="10">• Fluxo de contestação</text>
+  <text x="248" y="708" fill="#6b7280" font-size="10">• Prazo para resposta</text>
+  <text x="248" y="721" fill="#6b7280" font-size="10">• Sistema de tarefas</text>
+  <text x="248" y="734" fill="#6b7280" font-size="10">• Baixar comprovantes</text>
+  <rect x="444" y="644" width="200" height="110" rx="8" fill="white" stroke="#c4b5fd" stroke-width="1.5"/>
+  <rect x="444" y="644" width="200" height="22" rx="8" fill="#7c3aed"/>
+  <rect x="444" y="654" width="200" height="12" fill="#7c3aed"/>
+  <text x="544" y="660" text-anchor="middle" fill="white" font-size="10" font-weight="700">6. Conferência Bancária</text>
+  <text x="460" y="682" fill="#6b7280" font-size="10">• Upload extrato OFX/CSV</text>
+  <text x="460" y="695" fill="#6b7280" font-size="10">• Domicílio bancário por adq.</text>
+  <text x="460" y="708" fill="#6b7280" font-size="10">• Cruza depósito vs repasse</text>
+  <text x="460" y="721" fill="#6b7280" font-size="10">• Detecta depósito errado</text>
+  <text x="460" y="734" fill="#6b7280" font-size="10">• Saldo por conta/dia</text>
+  <rect x="656" y="644" width="224" height="110" rx="8" fill="white" stroke="#c4b5fd" stroke-width="1.5"/>
+  <rect x="656" y="644" width="224" height="22" rx="8" fill="#7c3aed"/>
+  <rect x="656" y="654" width="224" height="12" fill="#7c3aed"/>
+  <text x="768" y="660" text-anchor="middle" fill="white" font-size="10" font-weight="700">7. Conciliação Manual</text>
+  <text x="672" y="682" fill="#6b7280" font-size="10">• Forçar match de transações</text>
+  <text x="672" y="695" fill="#6b7280" font-size="10">• Justificativas configuráveis</text>
+  <text x="672" y="708" fill="#6b7280" font-size="10">• Audit log de quem conciliou</text>
+  <text x="672" y="721" fill="#6b7280" font-size="10">• Critérios automáticos custom</text>
+  <text x="672" y="734" fill="#6b7280" font-size="10">• Exportar resultado</text>
+
+  <!-- FASE 3 -->
+  <rect x="0" y="872" width="4" height="200" fill="#ea580c"/>
+  <text x="20" y="894" fill="#ea580c" font-size="10" font-weight="700" letter-spacing="1">FASE 3 — AUTOMAÇÃO</text>
+  <rect x="20" y="902" width="270" height="100" rx="8" fill="white" stroke="#fdba74" stroke-width="1.5"/>
+  <rect x="20" y="902" width="270" height="22" rx="8" fill="#ea580c"/>
+  <rect x="20" y="912" width="270" height="12" fill="#ea580c"/>
+  <text x="155" y="918" text-anchor="middle" fill="white" font-size="10" font-weight="700">8. Coletador SFTP Automático</text>
+  <text x="36" y="940" fill="#6b7280" font-size="10">• packages/coletador (BullMQ)</text>
+  <text x="36" y="953" fill="#6b7280" font-size="10">• Job diário 02:00 — baixa EDIs</text>
+  <text x="36" y="966" fill="#6b7280" font-size="10">• Suporte: Rede, Cielo, Alelo, Pluxee</text>
+  <text x="36" y="979" fill="#6b7280" font-size="10">• Retry automático + alerta de falha</text>
+  <rect x="302" y="902" width="270" height="100" rx="8" fill="white" stroke="#fdba74" stroke-width="1.5"/>
+  <rect x="302" y="902" width="270" height="22" rx="8" fill="#ea580c"/>
+  <rect x="302" y="912" width="270" height="12" fill="#ea580c"/>
+  <text x="437" y="918" text-anchor="middle" fill="white" font-size="10" font-weight="700">9. Exportação ERP (Remessas)</text>
+  <text x="318" y="940" fill="#6b7280" font-size="10">• Gerar arquivo para Totvs/SAP</text>
+  <text x="318" y="953" fill="#6b7280" font-size="10">• Formatos: CSV, OFX, CNAB</text>
+  <text x="318" y="966" fill="#6b7280" font-size="10">• Schedule ou sob demanda</text>
+  <text x="318" y="979" fill="#6b7280" font-size="10">• Log de remessas enviadas</text>
+  <rect x="584" y="902" width="296" height="100" rx="8" fill="white" stroke="#fdba74" stroke-width="1.5"/>
+  <rect x="584" y="902" width="296" height="22" rx="8" fill="#ea580c"/>
+  <rect x="584" y="912" width="296" height="12" fill="#ea580c"/>
+  <text x="732" y="918" text-anchor="middle" fill="white" font-size="10" font-weight="700">10. Parsers Adicionais</text>
+  <text x="600" y="940" fill="#6b7280" font-size="10">• Alelo EDI (formato próprio)</text>
+  <text x="600" y="953" fill="#6b7280" font-size="10">• Pluxee / VR Benefícios / Ticket</text>
+  <text x="600" y="966" fill="#6b7280" font-size="10">• Stone / GetNet API REST</text>
+  <text x="600" y="979" fill="#6b7280" font-size="10">• OFX (extrato bancário)</text>
+
+  <!-- FASE 4 -->
+  <rect x="0" y="1020" width="4" height="200" fill="#64748b"/>
+  <text x="20" y="1042" fill="#64748b" font-size="10" font-weight="700" letter-spacing="1">FASE 4 — CRESCIMENTO</text>
+  <rect x="20" y="1050" width="195" height="90" rx="8" fill="white" stroke="#cbd5e1" stroke-width="1.5"/>
+  <rect x="20" y="1050" width="195" height="22" rx="8" fill="#64748b"/>
+  <rect x="20" y="1060" width="195" height="12" fill="#64748b"/>
+  <text x="118" y="1066" text-anchor="middle" fill="white" font-size="10" font-weight="700">11. Multi-tenant SaaS</text>
+  <text x="36" y="1088" fill="#6b7280" font-size="10">• Planos FREE/PRO/ENTERPRISE</text>
+  <text x="36" y="1101" fill="#6b7280" font-size="10">• Onboarding de novos clientes</text>
+  <text x="36" y="1114" fill="#6b7280" font-size="10">• Cobrança Stripe</text>
+  <rect x="227" y="1050" width="195" height="90" rx="8" fill="white" stroke="#cbd5e1" stroke-width="1.5"/>
+  <rect x="227" y="1050" width="195" height="22" rx="8" fill="#64748b"/>
+  <rect x="227" y="1060" width="195" height="12" fill="#64748b"/>
+  <text x="325" y="1066" text-anchor="middle" fill="white" font-size="10" font-weight="700">12. Simulação de Antecipação</text>
+  <text x="243" y="1088" fill="#6b7280" font-size="10">• Calcular custo de antecipar</text>
+  <text x="243" y="1101" fill="#6b7280" font-size="10">• Comparar adquirentes</text>
+  <text x="243" y="1114" fill="#6b7280" font-size="10">• Integração FIDC/banco</text>
+  <rect x="434" y="1050" width="195" height="90" rx="8" fill="white" stroke="#cbd5e1" stroke-width="1.5"/>
+  <rect x="434" y="1050" width="195" height="22" rx="8" fill="#64748b"/>
+  <rect x="434" y="1060" width="195" height="12" fill="#64748b"/>
+  <text x="532" y="1066" text-anchor="middle" fill="white" font-size="10" font-weight="700">13. API Pública</text>
+  <text x="450" y="1088" fill="#6b7280" font-size="10">• Webhooks de eventos</text>
+  <text x="450" y="1101" fill="#6b7280" font-size="10">• REST documentada (Swagger)</text>
+  <text x="450" y="1114" fill="#6b7280" font-size="10">• Integração ERP/PDV direto</text>
+  <rect x="641" y="1050" width="239" height="90" rx="8" fill="white" stroke="#cbd5e1" stroke-width="1.5"/>
+  <rect x="641" y="1050" width="239" height="22" rx="8" fill="#64748b"/>
+  <rect x="641" y="1060" width="239" height="12" fill="#64748b"/>
+  <text x="761" y="1066" text-anchor="middle" fill="white" font-size="10" font-weight="700">14. Registro de Recebíveis Bacen</text>
+  <text x="657" y="1088" fill="#6b7280" font-size="10">• Chave UR (Unidade de Recebível)</text>
+  <text x="657" y="1101" fill="#6b7280" font-size="10">• Integração registradoras (CIP/TAG)</text>
+  <text x="657" y="1114" fill="#6b7280" font-size="10">• Marco Legal das Fintechs</text>
+
+  <!-- O QUE JÁ EXISTE -->
+  <rect x="20" y="1162" width="860" height="240" rx="8" fill="white" stroke="#e2e8f0" stroke-width="1.5"/>
+  <rect x="20" y="1162" width="860" height="28" rx="8" fill="#f0fdf4"/>
+  <rect x="20" y="1178" width="860" height="12" fill="#f0fdf4"/>
+  <text x="450" y="1181" text-anchor="middle" fill="#15803d" font-size="12" font-weight="700">✓ O QUE JÁ EXISTE E FUNCIONA</text>
+  <text x="44" y="1210" fill="#374151" font-size="10" font-weight="700">Backend (API — porta 3001)</text>
+  <text x="44" y="1226" fill="#6b7280" font-size="10">✓ POST /auth/login + /auth/registro</text>
+  <text x="44" y="1239" fill="#6b7280" font-size="10">✓ GET /empresa/estabelecimentos</text>
+  <text x="44" y="1252" fill="#6b7280" font-size="10">✓ POST /importacao/upload (Cielo + Rede)</text>
+  <text x="44" y="1265" fill="#6b7280" font-size="10">✓ GET /importacao/arquivos</text>
+  <text x="44" y="1278" fill="#6b7280" font-size="10">✓ POST /conciliacao/executar/:id</text>
+  <text x="44" y="1291" fill="#6b7280" font-size="10">✓ GET /conciliacao + /divergencias</text>
+  <text x="44" y="1304" fill="#6b7280" font-size="10">✓ GET /dashboard/resumo + /recebiveis</text>
+  <text x="44" y="1317" fill="#6b7280" font-size="10">✓ PATCH /divergencias/:id/resolver</text>
+  <text x="310" y="1210" fill="#374151" font-size="10" font-weight="700">Frontend (Web — porta 3000)</text>
+  <text x="310" y="1226" fill="#6b7280" font-size="10">✓ /login — autenticação JWT</text>
+  <text x="310" y="1239" fill="#6b7280" font-size="10">✓ / — Dashboard KPIs</text>
+  <text x="310" y="1252" fill="#6b7280" font-size="10">✓ /conciliacao — lista com status</text>
+  <text x="310" y="1265" fill="#6b7280" font-size="10">✓ /divergencias — drill-down + impacto R$</text>
+  <text x="310" y="1278" fill="#6b7280" font-size="10">✓ /importacao — upload EDI + drag-drop</text>
+  <text x="310" y="1291" fill="#6b7280" font-size="10">✓ Sidebar com navegação completa</text>
+  <text x="576" y="1210" fill="#374151" font-size="10" font-weight="700">Packages</text>
+  <text x="576" y="1226" fill="#6b7280" font-size="10">✓ edi-parser: Cielo (O+C) + Rede (1+2)</text>
+  <text x="576" y="1239" fill="#6b7280" font-size="10">✓ conciliador: motor NSU+adquirente</text>
+  <text x="576" y="1252" fill="#6b7280" font-size="10">✓ db: schema completo + seed</text>
+  <text x="576" y="1265" fill="#6b7280" font-size="10">✓ Docker: PostgreSQL 16 + Redis 7</text>
+  <text x="576" y="1285" fill="#374151" font-size="10" font-weight="700">Dados de teste (seed)</text>
+  <text x="576" y="1301" fill="#6b7280" font-size="10">✓ Empresa: Empório Villa Borghese</text>
+  <text x="576" y="1314" fill="#6b7280" font-size="10">✓ 5 vendas + 3 repasses conciliados</text>
+  <text x="576" y="1327" fill="#6b7280" font-size="10">✓ 2 concil. + 1 diverg. + 2 sem repasse</text>
+
+  <rect x="0" y="1396" width="900" height="24" fill="#2563eb" opacity="0.08"/>
+  <text x="450" y="1412" text-anchor="middle" fill="#64748b" font-size="10">Próximo: Fase 1 → Contratos de Taxas → Auditoria de Taxas → Fluxo de Caixa</text>
+</svg>

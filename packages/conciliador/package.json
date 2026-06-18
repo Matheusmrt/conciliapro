@@ -1,0 +1,14 @@
+{
+  "name": "@conciliacao/conciliador",
+  "version": "1.0.0",
+  "private": true,
+  "exports": {
+    ".": "./src/index.ts"
+  },
+  "dependencies": {
+    "@conciliacao/db": "workspace:*"
+  },
+  "devDependencies": {
+    "typescript": "^5.6.0"
+  }
+}

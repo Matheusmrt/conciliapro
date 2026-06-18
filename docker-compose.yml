@@ -1,0 +1,73 @@
+version: '3.9'
+
+services:
+  postgres:
+    image: postgres:16-alpine
+    container_name: conciliacao_postgres
+    restart: unless-stopped
+    ports:
+      - "5432:5432"
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-senha123}
+      POSTGRES_DB: conciliacao
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U postgres -d conciliacao"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  redis:
+    image: redis:7-alpine
+    container_name: conciliacao_redis
+    restart: unless-stopped
+    command: redis-server --appendonly yes
+    ports:
+      - "6379:6379"
+    volumes:
+      - redis_data:/data
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  api:
+    build:
+      context: .
+      dockerfile: apps/api/Dockerfile
+    container_name: conciliacao_api
+    restart: unless-stopped
+    depends_on:
+      postgres:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+    environment:
+      DATABASE_URL: postgresql://postgres:${POSTGRES_PASSWORD:-senha123}@postgres:5432/conciliacao
+      REDIS_URL: redis://redis:6379
+      JWT_SECRET: ${JWT_SECRET:-mude-em-producao}
+      SALT: ${SALT:-salt-dev}
+      PORT: 3001
+      NODE_ENV: production
+    ports:
+      - "3001:3001"
+
+  web:
+    build:
+      context: .
+      dockerfile: apps/web/Dockerfile
+      args:
+        NEXT_PUBLIC_API_URL: ${API_URL:-http://localhost:3001}
+    container_name: conciliacao_web
+    restart: unless-stopped
+    depends_on:
+      - api
+    ports:
+      - "3000:3000"
+
+volumes:
+  postgres_data:
+  redis_data:

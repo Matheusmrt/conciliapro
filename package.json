@@ -1,0 +1,17 @@
+{
+  "name": "conciliacao-cartoes",
+  "version": "1.0.0",
+  "private": true,
+  "scripts": {
+    "dev": "pnpm --parallel --filter \"./apps/*\" dev",
+    "build": "pnpm --filter \"./apps/*\" build",
+    "db:generate": "pnpm --filter @conciliacao/db generate",
+    "db:migrate": "pnpm --filter @conciliacao/db migrate",
+    "db:studio": "pnpm --filter @conciliacao/db studio",
+    "db:seed": "pnpm --filter @conciliacao/db seed",
+    "setup": "powershell -ExecutionPolicy Bypass -File setup.ps1"
+  },
+  "engines": {
+    "node": ">=20"
+  }
+}

@@ -1,0 +1,639 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+// ─── MULTI-TENANT ─────────────────────────────────────────────────────────────
+
+model Empresa {
+  id        String        @id @default(cuid())
+  nome      String
+  cnpj      String        @unique
+  email     String
+  telefone  String?
+  plano     Plano         @default(BASICO)
+  statusSaas StatusEmpresa @default(TRIAL)
+  trialEndsAt DateTime?
+  pagarmeCustomerId     String?
+  pagarmeSubscriptionId String?
+  ativo     Boolean  @default(true)
+  criadoEm DateTime @default(now())
+
+  grupoId String?
+  grupo   GrupoEmpresarial? @relation(fields: [grupoId], references: [id])
+
+  usuarios          Usuario[]
+  estabelecimentos  Estabelecimento[]
+  adquirentesConfig AdquirenteConfig[]
+  contratosTaxas    ContratoTaxa[]
+  alertasRegras     AlertaRegra[]
+  antecipacoes      Antecipacao[]
+  assinaturas       Assinatura[]
+  documentos        Documento[]
+
+  @@map("empresas")
+}
+
+model Documento {
+  id           String        @id @default(cuid())
+  tipo         TipoDocumento
+  nome         String
+  competencia  String        // "2026-06" YYYY-MM
+  descricao    String?
+  caminho      String        // path no disco
+  tamanhoBytes Int
+  criadoEm    DateTime      @default(now())
+
+  empresaId   String
+  empresa     Empresa       @relation(fields: [empresaId], references: [id])
+
+  @@map("documentos")
+}
+
+enum TipoDocumento {
+  BOLETO
+  NOTA_FISCAL
+  OUTRO
+}
+
+model Assinatura {
+  id          String         @id @default(cuid())
+  plano       Plano
+  status      String         // active, past_due, canceled, trialing
+  valorCentavos Int?
+  pagarmeId   String?
+  inicioEm    DateTime       @default(now())
+  renovaEm    DateTime?
+  canceladoEm DateTime?
+  criadoEm    DateTime       @default(now())
+
+  empresaId String
+  empresa   Empresa @relation(fields: [empresaId], references: [id])
+
+  @@map("assinaturas")
+}
+
+model Usuario {
+  id               String    @id @default(cuid())
+  email            String    @unique
+  nome             String
+  senha            String
+  perfil           Perfil    @default(OPERADOR)
+  ativo            Boolean   @default(true)
+  resetToken       String?
+  resetTokenExpira DateTime?
+  criadoEm        DateTime  @default(now())
+
+  empresaId String
+  empresa   Empresa @relation(fields: [empresaId], references: [id])
+
+  @@map("usuarios")
+}
+
+// ─── ESTABELECIMENTOS ─────────────────────────────────────────────────────────
+
+model Estabelecimento {
+  id        String   @id @default(cuid())
+  nome      String
+  cnpj      String
+  criadoEm DateTime @default(now())
+
+  empresaId String
+  empresa   Empresa @relation(fields: [empresaId], references: [id])
+
+  vendas               Venda[]
+  repasses             Repasse[]
+  conciliacoes         Conciliacao[]
+  divergencias         Divergencia[]
+  cancelamentos        Cancelamento[]
+  lancamentosBancarios LancamentoBancario[]
+  contasBancarias      ContaBancaria[]
+  boletos              Boleto[]
+
+  @@unique([cnpj, empresaId])
+  @@map("estabelecimentos")
+}
+
+// ─── CONFIG ADQUIRENTES ───────────────────────────────────────────────────────
+
+model AdquirenteConfig {
+  id          String      @id @default(cuid())
+  adquirente  Adquirente
+  tipoAcesso  TipoAcesso
+  credenciais Json        // { clientId, clientSecret, sftpHost, sftpUser, sftpPass }
+  ativo       Boolean     @default(true)
+  ultimaSincEm DateTime?
+
+  empresaId String
+  empresa   Empresa @relation(fields: [empresaId], references: [id])
+
+  @@map("adquirentes_config")
+}
+
+// ─── VENDAS (dados do PDV/ERP do cliente) ─────────────────────────────────────
+
+model Venda {
+  id              String   @id @default(cuid())
+  nsu             String
+  tid             String?
+  dataVenda       DateTime
+  valor           Decimal  @db.Decimal(12, 2)
+  parcelas        Int      @default(1)
+  bandeira        Bandeira
+  modalidade      Modalidade
+  adquirente      Adquirente
+  status          StatusVenda @default(PENDENTE)
+  origem          String?  // nome do PDV/ERP
+  criadoEm       DateTime @default(now())
+
+  estabelecimentoId String
+  estabelecimento   Estabelecimento @relation(fields: [estabelecimentoId], references: [id])
+
+  conciliacao Conciliacao?
+
+  @@unique([nsu, adquirente, estabelecimentoId])
+  @@map("vendas")
+}
+
+// ─── REPASSES (dados das adquirentes via EDI/API) ─────────────────────────────
+
+model Repasse {
+  id              String   @id @default(cuid())
+  nsu             String
+  tid             String?
+  dataVenda       DateTime
+  dataPagamento   DateTime
+  valorBruto      Decimal  @db.Decimal(12, 2)
+  taxaMdr         Decimal  @db.Decimal(5, 4)   // ex: 0.0229 = 2.29%
+  valorTaxa       Decimal  @db.Decimal(12, 2)
+  valorLiquido    Decimal  @db.Decimal(12, 2)
+  parcela         Int      @default(1)
+  totalParcelas   Int      @default(1)
+  bandeira        Bandeira
+  modalidade      Modalidade
+  adquirente      Adquirente
+  tipoRegistro    String?  // O, C, F no caso EDI Cielo
+  arquivoOrigem   String?  // nome do arquivo EDI
+  criadoEm       DateTime @default(now())
+
+  estabelecimentoId String
+  estabelecimento   Estabelecimento @relation(fields: [estabelecimentoId], references: [id])
+
+  conciliacao Conciliacao?
+
+  @@unique([nsu, adquirente, parcela, estabelecimentoId])
+  @@map("repasses")
+}
+
+// ─── CONCILIAÇÃO ──────────────────────────────────────────────────────────────
+
+model Conciliacao {
+  id              String            @id @default(cuid())
+  status          StatusConciliacao @default(CONCILIADA)
+  diferencaValor  Decimal?          @db.Decimal(12, 2)
+  diferencaTaxa   Decimal?          @db.Decimal(5, 4)
+  observacao      String?
+  conciliadoEm    DateTime          @default(now())
+
+  vendaId   String?  @unique
+  venda     Venda?   @relation(fields: [vendaId], references: [id])
+
+  repasseId String?  @unique
+  repasse   Repasse? @relation(fields: [repasseId], references: [id])
+
+  estabelecimentoId String
+  estabelecimento   Estabelecimento @relation(fields: [estabelecimentoId], references: [id])
+
+  divergencias Divergencia[]
+
+  @@map("conciliacoes")
+}
+
+// ─── DIVERGÊNCIAS ─────────────────────────────────────────────────────────────
+
+model Divergencia {
+  id          String          @id @default(cuid())
+  tipo        TipoDivergencia
+  descricao   String
+  valorImpacto Decimal?       @db.Decimal(12, 2)
+  resolvida            Boolean         @default(false)
+  motivoResolucao      String?
+  observacaoResolucao  String?
+  resolvidaEm          DateTime?
+  resolvidaPor         String?
+  criadoEm             DateTime        @default(now())
+
+  conciliacaoId     String
+  conciliacao       Conciliacao     @relation(fields: [conciliacaoId], references: [id])
+
+  estabelecimentoId String
+  estabelecimento   Estabelecimento @relation(fields: [estabelecimentoId], references: [id])
+
+  @@map("divergencias")
+}
+
+// ─── ARQUIVOS IMPORTADOS ──────────────────────────────────────────────────────
+
+model ArquivoImportado {
+  id            String         @id @default(cuid())
+  nome          String
+  tipo          TipoArquivo
+  adquirente    Adquirente
+  totalLinhas   Int
+  totalImportadas Int
+  status        StatusArquivo  @default(PROCESSANDO)
+  erros         Json?
+  s3Key         String?        // caminho no S3/R2
+  criadoEm     DateTime       @default(now())
+  processadoEm DateTime?
+
+  @@map("arquivos_importados")
+}
+
+// ─── CONTRATOS DE TAXAS ───────────────────────────────────────────────────────
+
+model ContratoTaxa {
+  id          String     @id @default(cuid())
+  nome        String
+  adquirente  Adquirente
+  numeroMatriz String?   // número do EC/contrato na adquirente
+  vigenciaInicio DateTime @default(now())
+  vigenciaFim  DateTime?
+  ativo       Boolean    @default(true)
+  criadoEm   DateTime   @default(now())
+
+  empresaId String
+  empresa   Empresa @relation(fields: [empresaId], references: [id])
+
+  itens ItemContratoTaxa[]
+
+  @@map("contratos_taxas")
+}
+
+model ItemContratoTaxa {
+  id          String     @id @default(cuid())
+  modalidade  Modalidade
+  bandeira    Bandeira?  // null = vale para todas
+  parcelas    Int?       // null = vale para todas
+  taxa        Decimal    @db.Decimal(6, 4)  // ex: 2.2900 = 2.29%
+  prazoDias   Int        @default(1)        // prazo de recebimento em dias úteis
+  criadoEm   DateTime   @default(now())
+
+  contratoId String
+  contrato   ContratoTaxa @relation(fields: [contratoId], references: [id], onDelete: Cascade)
+
+  @@map("itens_contratos_taxas")
+}
+
+// ─── CANCELAMENTOS & CHARGEBACKS ─────────────────────────────────────────────
+
+model Cancelamento {
+  id               String             @id @default(cuid())
+  nsu              String
+  tid              String?
+  dataVenda        DateTime
+  dataCancelamento DateTime
+  adquirente       Adquirente
+  bandeira         Bandeira
+  modalidade       Modalidade
+  valorBruto       Decimal            @db.Decimal(12, 2)
+  tipo             TipoCancelamento   @default(CANCELAMENTO_CLIENTE)
+  status           StatusCancelamento @default(DETECTADO)
+  motivoDescricao  String?
+  arquivoOrigem    String?
+  criadoEm        DateTime           @default(now())
+
+  estabelecimentoId String
+  estabelecimento   Estabelecimento @relation(fields: [estabelecimentoId], references: [id])
+
+  @@map("cancelamentos")
+}
+
+// ─── CONFERÊNCIA BANCÁRIA ─────────────────────────────────────────────────────
+
+model LancamentoBancario {
+  id            String           @id @default(cuid())
+  data          DateTime
+  descricao     String
+  valor         Decimal          @db.Decimal(12, 2) // + crédito, - débito
+  tipo          TipoLancamento
+  documento     String?
+  status        StatusLancamento @default(PENDENTE)
+  banco         String?
+  agencia       String?
+  conta         String?
+  arquivoOrigem String?
+  criadoEm     DateTime         @default(now())
+
+  estabelecimentoId String
+  estabelecimento   Estabelecimento @relation(fields: [estabelecimentoId], references: [id])
+
+  @@map("lancamentos_bancarios")
+}
+
+// ─── GRUPO EMPRESARIAL ────────────────────────────────────────────────────────
+
+model GrupoEmpresarial {
+  id        String   @id @default(cuid())
+  nome      String
+  criadoEm DateTime @default(now())
+
+  empresas Empresa[]
+
+  @@map("grupos_empresariais")
+}
+
+// ─── CONTAS BANCÁRIAS (domicílio bancário) ────────────────────────────────────
+
+model ContaBancaria {
+  id              String    @id @default(cuid())
+  banco           String
+  codigoBanco     String?
+  agencia         String
+  conta           String
+  tipoConta       TipoConta @default(CORRENTE)
+  titular         String
+  ativo           Boolean   @default(true)
+  criadoEm        DateTime  @default(now())
+
+  // Pluggy Open Finance
+  pluggyItemId    String?
+  pluggyAccountId String?
+  ultimaSincEm    DateTime?
+
+  estabelecimentoId String
+  estabelecimento   Estabelecimento @relation(fields: [estabelecimentoId], references: [id])
+
+  @@map("contas_bancarias")
+}
+
+// ─── ALERTAS AUTOMÁTICOS ──────────────────────────────────────────────────────
+
+model AlertaRegra {
+  id         String     @id @default(cuid())
+  nome       String
+  tipo       TipoAlerta
+  condicao   Json       // { campo, operador, valor, adquirente? }
+  emailNotif String?
+  ativo      Boolean    @default(true)
+  criadoEm  DateTime   @default(now())
+
+  empresaId String
+  empresa   Empresa @relation(fields: [empresaId], references: [id])
+
+  disparos AlertaDisparo[]
+
+  @@map("alertas_regras")
+}
+
+model AlertaDisparo {
+  id           String   @id @default(cuid())
+  mensagem     String
+  valorAtual   Decimal? @db.Decimal(12, 4)
+  emailEnviado Boolean  @default(false)
+  lido         Boolean  @default(false)
+  criadoEm    DateTime @default(now())
+
+  regraId String
+  regra   AlertaRegra @relation(fields: [regraId], references: [id], onDelete: Cascade)
+
+  @@map("alertas_disparos")
+}
+
+// ─── ANTECIPAÇÃO DE RECEBÍVEIS ────────────────────────────────────────────────
+
+model Antecipacao {
+  id              String            @id @default(cuid())
+  dataSimulacao   DateTime          @default(now())
+  dataRealizada   DateTime?
+  valorBruto      Decimal           @db.Decimal(12, 2)
+  taxaAntecipacao Decimal           @db.Decimal(6, 4)
+  custoTotal      Decimal           @db.Decimal(12, 2)
+  valorLiquido    Decimal           @db.Decimal(12, 2)
+  diasAntecipados Int
+  adquirente      Adquirente?
+  status          StatusAntecipacao @default(SIMULACAO)
+  observacao      String?
+  criadoEm       DateTime          @default(now())
+
+  empresaId String
+  empresa   Empresa @relation(fields: [empresaId], references: [id])
+
+  @@map("antecipacoes")
+}
+
+// ─── BOLETOS / DDA ────────────────────────────────────────────────────────────
+
+model Boleto {
+  id             String       @id @default(cuid())
+  nossoNumero    String
+  dataEmissao    DateTime
+  dataVencimento DateTime
+  dataPagamento  DateTime?
+  valor          Decimal      @db.Decimal(12, 2)
+  valorPago      Decimal?     @db.Decimal(12, 2)
+  pagador        String?
+  status         StatusBoleto @default(EMITIDO)
+  banco          String?
+  arquivoOrigem  String?
+  criadoEm      DateTime     @default(now())
+
+  estabelecimentoId String
+  estabelecimento   Estabelecimento @relation(fields: [estabelecimentoId], references: [id])
+
+  @@map("boletos")
+}
+
+// ─── AGENDA DE RECEBÍVEIS ─────────────────────────────────────────────────────
+
+model AgendaRecebiveis {
+  id              String     @id @default(cuid())
+  dataPrevista    DateTime
+  valorPrevisto   Decimal    @db.Decimal(12, 2)
+  adquirente      Adquirente
+  bandeira        Bandeira
+  modalidade      Modalidade
+  antecipado      Boolean    @default(false)
+  recebido        Boolean    @default(false)
+  criadoEm       DateTime   @default(now())
+
+  estabelecimentoId String
+
+  @@map("agenda_recebiveis")
+}
+
+// ─── ENUMS ────────────────────────────────────────────────────────────────────
+
+enum Plano {
+  BASICO
+  PROFISSIONAL
+  ENTERPRISE
+}
+
+enum StatusEmpresa {
+  TRIAL
+  ATIVO
+  INADIMPLENTE
+  CANCELADO
+}
+
+enum Perfil {
+  ADMIN
+  GERENTE
+  OPERADOR
+}
+
+enum Adquirente {
+  CIELO
+  REDE
+  STONE
+  GETNET
+  PAGSEGURO
+  SAFRA
+  BIN
+  ALELO
+  PLUXEE
+  VR_BENEFICIOS
+  TICKET
+  VEROCARD
+  UP_BRASIL
+  BEN_VISA_VALE
+  OUTROS
+}
+
+enum Bandeira {
+  VISA
+  MASTERCARD
+  ELO
+  AMEX
+  HIPERCARD
+  DINERS
+  CABAL
+  JCB
+  CREDZ
+  SOROCRED
+  BANESCARD
+  SICREDI
+  CUP
+  COOPERCRED
+  OUTROS
+}
+
+enum Modalidade {
+  CREDITO_A_VISTA
+  CREDITO_PARCELADO
+  DEBITO
+  PIX
+  VOUCHER
+}
+
+enum StatusVenda {
+  PENDENTE
+  CONCILIADA
+  DIVERGENTE
+  NAO_ENCONTRADA
+}
+
+enum StatusConciliacao {
+  CONCILIADA
+  DIVERGENCIA_VALOR
+  DIVERGENCIA_TAXA
+  DIVERGENCIA_PRAZO
+  VENDA_SEM_REPASSE
+  REPASSE_SEM_VENDA
+}
+
+enum TipoDivergencia {
+  TAXA_MAIOR_CONTRATADA
+  VALOR_DIFERENTE
+  PRAZO_ANTECIPADO
+  PRAZO_ATRASADO
+  VENDA_NAO_REPASSADA
+  REPASSE_DUPLICADO
+  CANCELAMENTO_NAO_ESTORNADO
+}
+
+enum TipoCancelamento {
+  CANCELAMENTO_CLIENTE
+  CHARGEBACK
+  FRAUDE
+  ERRO_OPERACIONAL
+  OUTROS
+}
+
+enum StatusCancelamento {
+  DETECTADO
+  ESTORNADO
+  PENDENTE_ESTORNO
+  CONTESTADO
+}
+
+enum TipoLancamento {
+  CREDITO
+  DEBITO
+}
+
+enum StatusLancamento {
+  CONCILIADO
+  PENDENTE
+  IGNORADO
+}
+
+enum TipoAcesso {
+  EDI_SFTP
+  API_REST
+  WEBHOOK
+  UPLOAD_MANUAL
+}
+
+enum TipoArquivo {
+  EDI_CIELO_O
+  EDI_CIELO_C
+  EDI_CIELO_F
+  EDI_REDE_O
+  EDI_REDE_C
+  EDI_REDE
+  EDI_GETNET
+  OFX
+  CSV_VENDAS
+}
+
+enum StatusArquivo {
+  AGUARDANDO
+  PROCESSANDO
+  CONCLUIDO
+  ERRO
+}
+
+enum TipoConta {
+  CORRENTE
+  POUPANCA
+  PAGAMENTO
+}
+
+enum TipoAlerta {
+  TAXA_MDR_ALTA
+  DIVERGENCIA_NOVA
+  SEM_REPASSE_DIAS
+  TAXA_CONCILIACAO_BAIXA
+  VALOR_REPASSE_DIVERGENTE
+}
+
+enum StatusAntecipacao {
+  SIMULACAO
+  SOLICITADA
+  APROVADA
+  LIQUIDADA
+  CANCELADA
+}
+
+enum StatusBoleto {
+  EMITIDO
+  PAGO
+  VENCIDO
+  CANCELADO
+}
