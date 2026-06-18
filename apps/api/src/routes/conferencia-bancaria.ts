@@ -77,23 +77,38 @@ function parseOFX(conteudo: string) {
 export async function rotasConferenciaBancaria(app: FastifyInstance) {
   const opts = { onRequest: [(app as any).autenticar] }
 
-  // Upload OFX
+  // Upload OFX — identifica estabelecimento automaticamente pelo PV na descrição
   app.post('/upload', { ...opts }, async (request, reply) => {
     const payload = (request as any).user
     const data = await request.file()
     if (!data) return reply.code(400).send({ erro: 'Arquivo não enviado' })
 
     const query = z.object({
-      estabelecimentoId: z.string(),
       banco: z.string().optional(),
       agencia: z.string().optional(),
       conta: z.string().optional(),
     }).parse(request.query)
 
-    const estab = await prisma.estabelecimento.findFirst({
-      where: { id: query.estabelecimentoId, empresaId: payload.empresaId },
+    // Carrega todos os estabelecimentos da empresa para lookup por PV (cnpj = nº PV)
+    const estabelecimentos = await prisma.estabelecimento.findMany({
+      where: { empresaId: payload.empresaId },
+      select: { id: true, cnpj: true, nome: true },
     })
-    if (!estab) return reply.code(404).send({ erro: 'Estabelecimento não encontrado' })
+
+    // Estabelecimento padrão (matriz) para vouchers sem PV na descrição
+    const estabPadrao = estabelecimentos.find(e => e.nome.toLowerCase().includes('matriz'))
+      ?? estabelecimentos[0]
+
+    function resolverEstabelecimento(descricao: string): string {
+      // Rede: "RECEBIMENTO REDE VISA DB0087076195" ou "AT0087076195"
+      const mRede = /[DA][BT]0*(\d+)$/i.exec(descricao)
+      if (mRede) {
+        const pv = mRede[1]
+        const found = estabelecimentos.find(e => e.cnpj === pv || e.cnpj.replace(/^0+/, '') === pv)
+        if (found) return found.id
+      }
+      return estabPadrao.id
+    }
 
     const chunks: Buffer[] = []
     for await (const chunk of data.file) chunks.push(chunk)
@@ -124,9 +139,10 @@ export async function rotasConferenciaBancaria(app: FastifyInstance) {
       l.tipo === 'CREDITO' && PADROES_RELEVANTES.some(p => p.test(l.descricao))
     )
 
-    // Insere lançamentos (ignora duplicatas por documento+estabelecimento)
+    // Insere lançamentos identificando estabelecimento automaticamente
     let importados = 0
     for (const l of lancamentosFiltrados) {
+      const estabelecimentoId = resolverEstabelecimento(l.descricao)
       try {
         await prisma.lancamentoBancario.create({
           data: {
@@ -139,7 +155,7 @@ export async function rotasConferenciaBancaria(app: FastifyInstance) {
             agencia: query.agencia,
             conta: query.conta,
             arquivoOrigem: nomeArquivo,
-            estabelecimentoId: query.estabelecimentoId,
+            estabelecimentoId,
           },
         })
         importados++

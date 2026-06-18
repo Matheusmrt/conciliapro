@@ -128,13 +128,12 @@ export default function ConferenciaBancariaPage() {
   useEffect(() => { carregar() }, [filtroStatus, filtroTipo, estabSelecionado])
 
   async function uploadOFX(file: File) {
-    if (!estabSelecionado) { setToast({ tipo: 'erro', msg: 'Selecione um estabelecimento antes de importar.' }); return }
     setUploading(true)
     const fd = new FormData()
     fd.append('file', file)
     try {
-      const r = await api.post(`/conferencia-bancaria/upload?estabelecimentoId=${estabSelecionado}`, fd)
-      setToast({ tipo: 'ok', msg: `${r.data.importados} de ${r.data.total} lançamentos importados.` })
+      const r = await api.post(`/conferencia-bancaria/upload`, fd)
+      setToast({ tipo: 'ok', msg: `${r.data.importados} lançamentos importados (${r.data.filtrados} de ${r.data.total} no arquivo).` })
       carregar()
     } catch (e: any) {
       setToast({ tipo: 'erro', msg: e?.response?.data?.erro ?? 'Erro ao importar o arquivo.' })
