@@ -10,7 +10,7 @@ const schemaLogin = z.object({
 })
 
 function hashSenha(senha: string): string {
-  return createHash('sha256').update(senha + process.env.SALT ?? 'salt-dev').digest('hex')
+  return createHash('sha256').update(senha + (process.env.SALT ?? 'salt-dev')).digest('hex')
 }
 
 export async function rotasAuth(app: FastifyInstance) {
