@@ -106,9 +106,27 @@ export async function rotasConferenciaBancaria(app: FastifyInstance) {
       return reply.code(400).send({ erro: 'Nenhum lançamento encontrado no arquivo OFX' })
     }
 
+    // Filtra apenas recebimentos de adquirentes/vouchers conhecidos
+    const PADROES_RELEVANTES = [
+      /RECEBIMENTO REDE/i,
+      /RECEBIMENTOS 0414/i,
+      /RECEBIMENTOS TICKET SERVICOS/i,
+      /TED RECEBIDA 033\.2271\.PLUXEE/i,
+      /TED RECEBIDA 033\.4550\.UP B/i,
+      /PIX RECEBIDO UP BRAS/i,
+      /PIX RECEBIDO ALELO/i,
+      /TED RECEBIDA 237\.2374\.ALELO/i,
+      /VR BENEFICIOS/i,
+      /VR BENEFCIO/i,
+    ]
+
+    const lancamentosFiltrados = lancamentosRaw.filter(l =>
+      l.tipo === 'CREDITO' && PADROES_RELEVANTES.some(p => p.test(l.descricao))
+    )
+
     // Insere lançamentos (ignora duplicatas por documento+estabelecimento)
     let importados = 0
-    for (const l of lancamentosRaw) {
+    for (const l of lancamentosFiltrados) {
       try {
         await prisma.lancamentoBancario.create({
           data: {
@@ -130,7 +148,7 @@ export async function rotasConferenciaBancaria(app: FastifyInstance) {
       }
     }
 
-    return { importados, total: lancamentosRaw.length, arquivo: nomeArquivo }
+    return { importados, total: lancamentosRaw.length, filtrados: lancamentosFiltrados.length, arquivo: nomeArquivo }
   })
 
   // Listar lançamentos com resumo e sugestões de conciliação
