@@ -114,6 +114,8 @@ model Estabelecimento {
   lancamentosBancarios LancamentoBancario[]
   contasBancarias      ContaBancaria[]
   boletos              Boleto[]
+  hipcomConfig         HipcomConfig?
+  vendasHipcom         VendaHipcom[]
 
   @@unique([cnpj, empresaId])
   @@map("estabelecimentos")
@@ -447,6 +449,78 @@ model Boleto {
   estabelecimento   Estabelecimento @relation(fields: [estabelecimentoId], references: [id])
 
   @@map("boletos")
+}
+
+// ─── HIPCOM PDV ───────────────────────────────────────────────────────────────
+
+model HipcomConfig {
+  id           String    @id @default(cuid())
+  baseUrl      String    // ex: http://192.168.45.45:2222 ou URL pública/ngrok
+  basicUser    String    // usuário Basic Auth
+  basicSenha   String    // senha Basic Auth
+  cnpj         String    // header cnpj (obrigatório pela API)
+  senhaHipcom  String    // header senha (gerada pela Hipcom)
+  lojaId       Int       @default(1)
+  ativo        Boolean   @default(true)
+  ultimaSincEm DateTime?
+  criadoEm     DateTime  @default(now())
+
+  estabelecimentoId String          @unique
+  estabelecimento   Estabelecimento @relation(fields: [estabelecimentoId], references: [id])
+
+  @@map("hipcom_configs")
+}
+
+model VendaHipcom {
+  id          String   @id @default(cuid())
+  numeroCupom String
+  terminal    Int
+  dataHora    DateTime
+  subtotal    Decimal  @db.Decimal(12, 2)
+  desconto    Decimal  @db.Decimal(12, 2) @default(0)
+  acrescimo   Decimal  @db.Decimal(12, 2) @default(0)
+  total       Decimal  @db.Decimal(12, 2)
+  cpfCnpj     String?
+  cancelado   Boolean  @default(false)
+  sincEm      DateTime @default(now())
+
+  estabelecimentoId String
+  estabelecimento   Estabelecimento    @relation(fields: [estabelecimentoId], references: [id])
+  itens             VendaHipcomItem[]
+  pagamentos        VendaHipcomPagto[]
+
+  @@unique([numeroCupom, terminal, estabelecimentoId])
+  @@map("vendas_hipcom")
+}
+
+model VendaHipcomPagto {
+  id            String  @id @default(cuid())
+  meioPagamento String  // CARTAO CRE, CARTAO DEB, DINHEIRO, PIX, CONVENIO, POS, OUTROS
+  valor         Decimal @db.Decimal(12, 2)
+  nsu           String?
+  bin           String?
+  host          String?
+
+  vendaHipcomId String
+  venda         VendaHipcom @relation(fields: [vendaHipcomId], references: [id], onDelete: Cascade)
+
+  @@map("vendas_hipcom_pagtos")
+}
+
+model VendaHipcomItem {
+  id           String      @id @default(cuid())
+  plu          Int?
+  ean          String?
+  descricao    String
+  quantidade   Decimal     @db.Decimal(10, 3)
+  valorUnit    Decimal     @db.Decimal(12, 2)
+  valorTotal   Decimal     @db.Decimal(12, 2)
+  criadoEm     DateTime    @default(now())
+
+  vendaHipcomId String
+  venda         VendaHipcom @relation(fields: [vendaHipcomId], references: [id], onDelete: Cascade)
+
+  @@map("vendas_hipcom_itens")
 }
 
 // ─── AGENDA DE RECEBÍVEIS ─────────────────────────────────────────────────────

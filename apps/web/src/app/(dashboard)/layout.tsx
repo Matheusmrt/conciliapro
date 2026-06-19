@@ -7,7 +7,7 @@ import {
   LayoutDashboard, FileSearch, Upload, Settings, LogOut,
   AlertTriangle, Receipt, ShieldAlert, TrendingUp, CalendarDays,
   XCircle, Landmark, Link2, Download, Cpu, Users, FileBarChart,
-  Layers, Building2, FileText, CreditCard, BellRing, ChevronDown, Banknote, Bell, FolderOpen,
+  Layers, Building2, FileText, CreditCard, BellRing, ChevronDown, Banknote, Bell, FolderOpen, PackageSearch,
 } from 'lucide-react'
 import AuthGuard from '@/components/AuthGuard'
 import { logout, getUsuario } from '@/lib/auth'
@@ -48,6 +48,7 @@ const groups = [
   {
     label: 'Sistema',
     items: [
+      { href: '/hipcom',                     label: 'Hipcom PDV',      icon: PackageSearch },
       { href: '/importacao',                label: 'Importação',      icon: Upload },
       { href: '/exportacao',                label: 'Exportação ERP',  icon: Download },
       { href: '/cadastros/contratos-taxas', label: 'Contratos',       icon: Receipt },
@@ -364,6 +365,7 @@ function BreadCrumb({ pathname }: { pathname: string }) {
     '/alertas': 'Alertas Automáticos',
     '/grupo-empresarial': 'Grupo Empresarial',
     '/relatorio': 'Relatório Gerencial',
+    '/hipcom': 'Hipcom PDV',
     '/importacao': 'Importação de Arquivos',
     '/exportacao': 'Exportação ERP',
     '/cadastros/contratos-taxas': 'Contratos de Taxas',

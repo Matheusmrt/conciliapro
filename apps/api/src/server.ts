@@ -30,6 +30,7 @@ import { rotasPublicas } from './routes/public.js'
 import { rotasAdmin } from './routes/admin.js'
 import { rotasOpenFinance } from './routes/open-finance.js'
 import { rotasDocumentos } from './routes/documentos.js'
+import { rotasHipcom } from './routes/hipcom.js'
 
 const app = Fastify({ logger: true })
 
@@ -74,6 +75,7 @@ await app.register(rotasPublicas,    { prefix: '/public' })
 await app.register(rotasAdmin,       { prefix: '/admin' })
 await app.register(rotasOpenFinance, { prefix: '/open-finance' })
 await app.register(rotasDocumentos,  { prefix: '/documentos' })
+await app.register(rotasHipcom,      { prefix: '/hipcom' })
 
 app.get('/health', async () => ({ status: 'ok', timestamp: new Date().toISOString() }))
 
