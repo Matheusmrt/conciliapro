@@ -47,4 +47,4 @@ COPY --from=builder /app/pnpm-workspace.yaml ./
 
 EXPOSE 3001
 
-CMD ["sh", "-c", "node_modules/.bin/prisma migrate deploy --schema=packages/db/prisma/schema.prisma && node apps/api/dist/server.js"]
+CMD ["sh", "-c", "until node_modules/.bin/prisma migrate deploy --schema=packages/db/prisma/schema.prisma; do echo 'Migration falhou, tentando em 5s...'; sleep 5; done && node apps/api/dist/server.js"]
