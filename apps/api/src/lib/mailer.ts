@@ -1,38 +1,30 @@
-import nodemailer from 'nodemailer'
+import { Resend } from 'resend'
 
-export function criarTransporter() {
-  const host = process.env.SMTP_HOST
-  const port = Number(process.env.SMTP_PORT ?? 587)
-  const user = process.env.SMTP_USER
-  const pass = process.env.SMTP_PASS
-
-  if (!host || !user || !pass) {
-    // Modo preview — usa Ethereal em dev
-    return null
-  }
-
-  return nodemailer.createTransport({
-    host,
-    port,
-    secure: port === 465,
-    auth: { user, pass },
-  })
+function getResend() {
+  const apiKey = process.env.RESEND_API_KEY
+  if (!apiKey) return null
+  return new Resend(apiKey)
 }
 
 export async function enviarEmail(para: string | undefined | null, assunto: string, html: string) {
-  const transporter = criarTransporter()
-  if (!transporter) {
-    console.log(`[mailer] SMTP não configurado. E-mail para ${para}: ${assunto}`)
-    return { ok: false, motivo: 'SMTP não configurado' }
+  const resend = getResend()
+  if (!resend) {
+    console.log(`[mailer] RESEND_API_KEY não configurado. E-mail para ${para}: ${assunto}`)
+    return { ok: false, motivo: 'RESEND_API_KEY não configurado' }
   }
 
   const destino = para || process.env.SMTP_NOTIF_PARA || process.env.SMTP_USER
   if (!destino) return { ok: false, motivo: 'Nenhum destinatário configurado' }
 
-  const from = process.env.SMTP_FROM ?? process.env.SMTP_USER
+  const from = process.env.SMTP_FROM ?? 'conciliacao@emporiovillaborghese.com.br'
+
   try {
-    await transporter.sendMail({ from, to: destino, subject: assunto, html })
-    console.log(`[mailer] E-mail enviado para ${destino}: ${assunto}`)
+    const { error } = await resend.emails.send({ from, to: destino, subject: assunto, html })
+    if (error) {
+      console.error(`[mailer] Erro Resend para ${destino}:`, error)
+      return { ok: false, motivo: error.message }
+    }
+    console.log(`[mailer] E-mail enviado via Resend para ${destino}: ${assunto}`)
     return { ok: true }
   } catch (e: any) {
     console.error(`[mailer] Erro ao enviar e-mail para ${destino}:`, e.message)
