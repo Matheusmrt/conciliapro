@@ -33,22 +33,17 @@ export async function rotasRedeAcesso(app: FastifyInstance) {
     }
   })
 
-  // Solicitar opt-in para TODOS os 5 PVs de uma vez
+  // Solicitar opt-in para TODOS os 5 PVs de uma vez (um único request)
   app.post('/solicitar-todos', { ...opts }, async (_, reply) => {
-    const resultados: any[] = []
-
-    for (const pv of PVS_REAIS) {
-      try {
-        const r = await solicitarAcesso({ requestCompanyNumber: pv, requestType: 'TOTAL' })
-        resultados.push({ pv, status: r.status, data: r.data })
-      } catch (e: any) {
-        resultados.push({ pv, erro: e.message })
-      }
-      // Pequena pausa para não sobrecarregar a API
-      await new Promise(r => setTimeout(r, 500))
+    try {
+      const r = await solicitarAcesso({
+        requestCompanyNumber: PVS_REAIS[0],
+        companyNumbers: PVS_REAIS,
+      })
+      return { pvs: PVS_REAIS, status: r.status, data: r.data }
+    } catch (e: any) {
+      return reply.code(500).send({ erro: e.message })
     }
-
-    return { pvs: PVS_REAIS, resultados }
   })
 
   // Consultar status de uma solicitação pelo requestId

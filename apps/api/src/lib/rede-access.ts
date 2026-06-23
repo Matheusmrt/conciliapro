@@ -56,29 +56,34 @@ export async function getAccessToken(): Promise<string> {
   return cachedToken.token
 }
 
-// Solicitar acesso (Opt-in) a um PV
-// requestType: 'TOTAL' = todos os dados | 'PARTIAL' = só matriz
+const PARTNER_URL = 'https://api.userede.com.br/partner/v1/organizations/requests/features/merchant-statement'
+
+// Solicitar acesso (Opt-in) — endpoint correto: /partner/v1/organizations/requests/features/merchant-statement
+// requestCompanyNumber: PV solicitante (master)
+// companyNumbers: lista de PVs para liberar acesso
+// requestType: "P" (parcial) | "T" (total)
+// permissions: "R" (read)
 export async function solicitarAcesso(params: {
-  requestCompanyNumber: string
-  requestType?: 'TOTAL' | 'PARTIAL'
-  branches?: string[]
+  requestCompanyNumber: number | string
+  companyNumbers: (number | string)[]
+  requestType?: 'P' | 'T'
+  permissions?: string
 }) {
   const token = await getAccessToken()
 
-  const body: any = {
-    requestCompanyNumber: params.requestCompanyNumber,
-    requestType: params.requestType ?? 'TOTAL',
+  const body = {
+    requestCompanyNumber: Number(params.requestCompanyNumber),
+    companyNumbers: params.companyNumbers.map(Number),
+    requestType: params.requestType ?? 'P',
+    permissions: params.permissions ?? 'R',
   }
 
-  if (params.branches && params.branches.length > 0) {
-    body.branches = params.branches.map(b => ({ branchCompanyNumber: b }))
-  }
-
-  const res = await fetch(`${BASE_URL}/gestao-acessos/v1/solicitacoes`, {
+  const res = await fetch(PARTNER_URL, {
     method: 'POST',
     headers: {
       'Authorization': `Bearer ${token}`,
       'Content-Type': 'application/json',
+      'Accept': 'application/json',
     },
     body: JSON.stringify(body),
   })
@@ -95,20 +100,24 @@ export async function solicitarAcesso(params: {
 export async function consultarSolicitacao(requestId: string) {
   const token = await getAccessToken()
 
-  const res = await fetch(`${BASE_URL}/gestao-acessos/v1/solicitacoes/${requestId}`, {
-    headers: { 'Authorization': `Bearer ${token}` },
+  const res = await fetch(`${PARTNER_URL.replace('/features/merchant-statement', '')}/${requestId}/features/merchant-statement`, {
+    headers: { 'Authorization': `Bearer ${token}`, 'Accept': 'application/json' },
   })
 
-  return { status: res.status, data: await res.json() }
+  const text = await res.text()
+  try { return { status: res.status, data: JSON.parse(text) } }
+  catch { return { status: res.status, data: { raw: text } } }
 }
 
 // Listar todas as solicitações
 export async function listarSolicitacoes() {
   const token = await getAccessToken()
 
-  const res = await fetch(`${BASE_URL}/gestao-acessos/v1/solicitacoes`, {
-    headers: { 'Authorization': `Bearer ${token}` },
+  const res = await fetch(PARTNER_URL, {
+    headers: { 'Authorization': `Bearer ${token}`, 'Accept': 'application/json' },
   })
 
-  return { status: res.status, data: await res.json() }
+  const text = await res.text()
+  try { return { status: res.status, data: JSON.parse(text) } }
+  catch { return { status: res.status, data: { raw: text } } }
 }
