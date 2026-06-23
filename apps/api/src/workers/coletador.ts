@@ -6,7 +6,16 @@ import type { Adquirente } from '@conciliacao/edi-parser'
 
 const REDIS_URL = process.env.REDIS_URL ?? 'redis://localhost:6379'
 
-export const connection = new IORedis(REDIS_URL, { maxRetriesPerRequest: null })
+export const connection = new IORedis(REDIS_URL, {
+  maxRetriesPerRequest: null,
+  enableOfflineQueue: false,
+  lazyConnect: true,
+  retryStrategy: (times) => {
+    if (!process.env.REDIS_URL) return null // sem Redis configurado, desiste silenciosamente
+    return Math.min(times * 1000, 30000)
+  },
+})
+connection.on('error', () => {}) // silencia erros de reconexão nos logs
 
 export const QUEUE_COLETA = 'coleta-edi'
 export const QUEUE_CONCILIACAO = 'conciliacao'
