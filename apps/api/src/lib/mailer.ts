@@ -30,8 +30,14 @@ export async function enviarEmail(para: string | undefined | null, assunto: stri
   if (!destino) return { ok: false, motivo: 'Nenhum destinatário configurado' }
 
   const from = process.env.SMTP_FROM ?? process.env.SMTP_USER
-  await transporter.sendMail({ from, to: destino, subject: assunto, html })
-  return { ok: true }
+  try {
+    await transporter.sendMail({ from, to: destino, subject: assunto, html })
+    console.log(`[mailer] E-mail enviado para ${destino}: ${assunto}`)
+    return { ok: true }
+  } catch (e: any) {
+    console.error(`[mailer] Erro ao enviar e-mail para ${destino}:`, e.message)
+    return { ok: false, motivo: e.message }
+  }
 }
 
 export function htmlAlertaDivergencias(empresa: string, divergencias: any[]) {
