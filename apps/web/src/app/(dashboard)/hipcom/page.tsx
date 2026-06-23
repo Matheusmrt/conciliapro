@@ -89,7 +89,7 @@ function AbaVendas({ estabelecimentos }: { estabelecimentos: Estab[] }) {
       {/* Tabela */}
       {loading && <Spinner />}
       {!loading && dados && vendas.length === 0 && (
-        <EmptySearch title="Nenhuma venda encontrada" desc="Sincronize o PDV primeiro na aba Sincronização" />
+        <EmptySearch message="Nenhuma venda encontrada. Sincronize o PDV primeiro na aba Sincronização." />
       )}
       {!loading && vendas.length > 0 && (
         <div className="bg-white rounded-xl border border-slate-200 overflow-hidden">
