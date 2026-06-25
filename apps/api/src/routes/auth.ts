@@ -61,7 +61,7 @@ export async function rotasAuth(app: FastifyInstance) {
 
     const url = `${process.env.FRONTEND_URL ?? 'http://localhost:3000'}/redefinir-senha?token=${token}`
 
-    await enviarEmail(email, 'ConciliaPro — Redefinir senha', `
+    const resultEmail = await enviarEmail(email, 'ConciliaPro — Redefinir senha', `
       <div style="font-family:system-ui,sans-serif;max-width:480px;margin:32px auto;padding:28px;background:#fff;border-radius:12px;border:1px solid #e2e8f0">
         <h2 style="color:#1e40af;margin:0 0 12px">ConciliaPro</h2>
         <p style="color:#374151">Olá, <strong>${usuario.nome}</strong>.</p>
@@ -72,6 +72,10 @@ export async function rotasAuth(app: FastifyInstance) {
         <p style="color:#6b7280;font-size:12px">Este link expira em 2 horas. Se não foi você, ignore este email.</p>
       </div>
     `)
+
+    if (!resultEmail.ok) {
+      app.log.error({ motivo: resultEmail.motivo }, '[auth] Falha ao enviar e-mail de recuperação de senha')
+    }
 
     return { ok: true }
   })
