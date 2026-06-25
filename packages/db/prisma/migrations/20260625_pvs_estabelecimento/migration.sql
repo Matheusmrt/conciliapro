@@ -1,0 +1,1 @@
+ALTER TABLE "estabelecimentos" ADD COLUMN IF NOT EXISTS "pvs" TEXT[] NOT NULL DEFAULT '{}';

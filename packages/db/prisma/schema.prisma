@@ -101,6 +101,7 @@ model Estabelecimento {
   id        String   @id @default(cuid())
   nome      String
   cnpj      String
+  pvs       String[] @default([])
   criadoEm DateTime @default(now())
 
   empresaId String
